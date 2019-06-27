@@ -1,6 +1,6 @@
 <template>
   <div>
-    <p>App Component</p>
+    <p><i class="iconfont icon-caidan_o"></i> App Component</p>
   </div>
 </template>
 
@@ -16,6 +16,6 @@ export default {
 }
 </script>
 
-<style scoped>
+<style lang="less" scoped>
 
 </style>
