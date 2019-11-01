@@ -11,6 +11,8 @@ Vue.use(ElementUI)
 
 Vue.config.productionTip = false
 
+// http://ttapi.research.itcast.cn/mp/
+
 new Vue({
   router,
   render: h => h(App)
