@@ -25,7 +25,7 @@
           <el-form-item>
             <el-button class="btn_login"
                        type="primary"
-                       @click="onSubmit">登录</el-button>
+                       @click="handleSendCode">登录</el-button>
           </el-form-item>
         </el-form>
       </div>
@@ -34,19 +34,31 @@
 </template>
 
 <script>
+import axios from 'axios'
+
 export default {
   name: 'Applogin',
   data () {
     return {
       form: {
         mobile: '19801118660',
-        code: '123456'
+        code: ''
       }
     }
   },
   methods: {
-    onSubmit () {
+    handleSendCode () {
       console.log('1')
+      const { mobile } = this.form
+
+      // this.$http()
+      axios({
+        method: 'GET',
+        url: `http://ttapi.research.itcast.cn/mp/v1_0/captchas/${mobile}`
+      })
+        .then(res => {
+          console.log(res)
+        })
     }
   }
 }
