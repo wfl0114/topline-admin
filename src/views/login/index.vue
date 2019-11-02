@@ -19,13 +19,13 @@
             </el-col>
             <el-col :span='10'
                     :offset='2'>
-              <el-button>获取验证码</el-button>
+              <el-button @click="handleSendCode">获取验证码</el-button>
             </el-col>
           </el-form-item>
           <el-form-item>
             <el-button class="btn_login"
                        type="primary"
-                       @click="handleSendCode">登录</el-button>
+                       @click="onSubmit">登录</el-button>
           </el-form-item>
         </el-form>
       </div>
@@ -35,6 +35,7 @@
 
 <script>
 import axios from 'axios'
+import '@/vendor/gt' // gt.js 会向全局 window 暴露一个函数 initGeetest
 
 export default {
   name: 'Applogin',
@@ -42,7 +43,8 @@ export default {
     return {
       form: {
         mobile: '19801118660',
-        code: ''
+        code: '',
+        captchaObj: null // 通过 initGeetest 得到极验验证码对象
       }
     }
   },
@@ -51,14 +53,38 @@ export default {
       console.log('1')
       const { mobile } = this.form
 
+      if (this.captchaObj) {
+        return this.captchaObj.verify()
+      }
       // this.$http()
       axios({
         method: 'GET',
         url: `http://ttapi.research.itcast.cn/mp/v1_0/captchas/${mobile}`
       })
         .then(res => {
-          console.log(res)
+          // console.log(res)
+          const data = res.data.data
+          window.initGeetest({
+            gt: data.gt,
+            challenge: data.challenge,
+            offline: !data.success,
+            new_captcha: data.new_captcha,
+            product: 'bind'
+          }, (captchaObj) => {
+            this.captchaObj = captchaObj
+            // 这里可以调用验证实例 captchObj 的实例方法
+            captchaObj.onReady(function () {
+              // 只有 ready 了才能显示验证码
+              captchaObj.verify()
+            }).onSuccess(function () {
+              console.log('验证成功了')
+            })
+          })
         })
+    },
+
+    onSubmit () {
+      console.log('onSubmit')
     }
   }
 }
